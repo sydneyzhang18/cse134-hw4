@@ -19,9 +19,7 @@
         width: 90%;
         max-width: 800px;
         margin: 2rem auto;
-        /* display: grid; */
         gap: 0.5rem 1.5rem;
-        /* align-items: center; */
         display: flex;
         flex-direction: column;
       }
@@ -33,14 +31,11 @@
       }
 
       fieldset label {
-        /* justify-self: end; */
         margin-top: 0.5rem;
       }
 
-      fieldset input[type="text"],
-      fieldset input[type="email"],
+      fieldset input,
       fieldset textarea {
-        /* width: 100%; */
         padding: 0.5rem;
         border: 1px solid var(--color-primary-text);
         border-radius: 4px;
@@ -48,23 +43,33 @@
         resize: vertical;
       }
 
-      fieldset {
-        /* grid-template-columns: auto 1fr; */
-      }
-
       fieldset textarea {
-        /* grid-column: 2; */
         min-height: 150px;
       }
 
       fieldset input[type="submit"] {
-        /* grid-column: 1 / -1; */
         justify-self: center;
         margin-top: 0.5rem;
       }
 
       fieldset input[type="submit"]:hover {
         background: var(--color-tertiary);
+      }
+
+      input:required,
+      textarea:required {
+        border-left: 3px solid rgb(165, 10, 10);
+      }
+
+      input:valid,
+      textarea:valid {
+        border-color: var(--color-secondary, #869e3c);
+      }
+
+      input:user-invalid,
+      textarea:user-invalid {
+        border-color: rgb(165, 10, 10);
+        background: rgb(244, 212, 212);
       }
     </style>
   </head>
@@ -91,15 +96,43 @@
         <fieldset>
           <legend>Send me an email!</legend>
           <label for="name">Name</label>
-          <input type="text" id="name" name="name" />
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            minlength="2"
+            maxlength="50"
+            pattern="[A-Za-z .'-]+"
+            placeholder="Your name"
+          />
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            maxlength="60"
+            placeholder="youremail@example.com"
+          />
           <label for="subject">Subject</label>
-          <input type="text" id="subject" name="subject" />
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            required
+            minlength="2"
+            maxlength="80"
+            pattern="[A-Za-z0-9 ,.'?!-]+"
+            placeholder="Subject"
+          />
           <label for="message">Message</label>
           <textarea
             id="message"
             name="message"
+            required
+            minlength="5"
+            maxlength="600"
             placeholder="Type message..."
           ></textarea>
           <input type="submit" value="Send" />
