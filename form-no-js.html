@@ -78,7 +78,8 @@
     </header>
     <main>
       <h1>Contact</h1>
-      <form>
+
+      <form action="https://www.httpbin.org/post" method="POST">
         <fieldset>
           <legend>Send me an email!</legend>
           <label for="name">Name</label>
@@ -93,6 +94,13 @@
             placeholder="Type message..."
           ></textarea>
           <input type="submit" value="Send" />
+          <input
+            type="text"
+            id="possible_bot"
+            name="possible_bot"
+            value="true"
+            hidden
+          />
         </fieldset>
       </form>
     </main>
