@@ -28,10 +28,12 @@
         font-weight: bold;
         font-size: 1.25rem;
         padding: 0 0.5rem;
+        color: var(--color-primary-text);
       }
 
       fieldset label {
         justify-self: end;
+        color: var(--color-primary-text);
       }
 
       fieldset input[type="text"],
@@ -66,8 +68,8 @@
   </head>
   <body>
     <header>
-      <nav>
-        <ul>
+      <nav id="nav-bar">
+        <ul id="nav-list">
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="projects.html">Projects</a></li>
@@ -107,5 +109,6 @@
         ><img src="assets/mail.png" alt="Email"
       /></a>
     </footer>
+    <script src="script.js"></script>
   </body>
 </html>

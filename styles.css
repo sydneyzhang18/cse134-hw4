@@ -4,10 +4,32 @@
   --color-primary: light-dark(#869e3c, #303d2b);
   --color-secondary: light-dark(#303d2b, #869e3c);
   --color-tertiary: light-dark(#425639, #a3bc59);
+  --color-quaternary: #d9e6e2;
   --color-primary-text: light-dark(#2a272b, #dae3e0);
   --color-secondary-text: light-dark(#dae3e0, #2a272b);
+  --color-attention: #869e3c;
+  --color-dark-text: #2a272b;
   --font-emphasize: "NexaHeavy", sans-serif;
   --font-normal: "Nexa", sans-serif;
+}
+/* FORCE LIGHT MODE */
+html.theme-light {
+  --color-background: #dae3e0;
+  --color-primary: #869e3c;
+  --color-secondary: #303d2b;
+  --color-tertiary: #425639;
+  --color-primary-text: #2a272b;
+  --color-secondary-text: #dae3e0;
+}
+
+/* FORCE DARK MODE */
+html.theme-dark {
+  --color-background: #2a272b;
+  --color-primary: #303d2b;
+  --color-secondary: #869e3c;
+  --color-tertiary: #a3bc59;
+  --color-primary-text: #dae3e0;
+  --color-secondary-text: #2a272b;
 }
 @font-face {
   font-family: "Nexa";
@@ -105,4 +127,12 @@ input[type="submit"] {
 
 button:hover {
   background-color: var(--color-tertiary, #a3bc59);
+}
+
+h2,
+h3,
+h4,
+label,
+p {
+  color: var(--color-primary-text);
 }

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Sydney Zhang" />
+    <title>Personal Portfolio contact page</title>
+    <link rel="icon" href="assets/smile.ico" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      form {
+        width: 100%;
+        max-width: 100%;
+      }
+      fieldset {
+        border: 2px solid var(--color-primary-text);
+        border-radius: 8px;
+        padding: 1rem;
+        width: 90%;
+        max-width: 800px;
+        margin: 2rem auto;
+        gap: 0.5rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+      }
+
+      legend {
+        font-weight: bold;
+        font-size: 1.25rem;
+        padding: 0 0.5rem;
+        color: var(--color-primary-text);
+      }
+
+      fieldset label {
+        margin-top: 0.5rem;
+        color: var(--color-primary-text);
+      }
+
+      fieldset input,
+      fieldset textarea {
+        padding: 0.5rem;
+        border: 1px solid var(--color-primary-text);
+        border-radius: 4px;
+        font: inherit;
+        resize: vertical;
+        background-color: var(--color-quaternary);
+        color: var(--color-dark-text);
+      }
+
+      fieldset textarea {
+        min-height: 150px;
+      }
+
+      fieldset input[type="submit"] {
+        justify-self: center;
+        margin-top: 0.5rem;
+      }
+
+      fieldset input[type="submit"]:hover {
+        background: var(--color-tertiary);
+      }
+
+      input:required,
+      textarea:required {
+        border-left: 3px solid rgb(165, 10, 10);
+      }
+
+      input:valid,
+      textarea:valid {
+        border-color: #869e3c;
+      }
+
+      input:user-invalid,
+      textarea:user-invalid {
+        border-color: rgb(165, 10, 10);
+        background: rgb(244, 212, 212);
+      }
+
+      p {
+        color: var(--color-primary-text);
+      }
+
+      output#errors {
+        display: block;
+        color: #d41;
+        margin-top: 0.5rem;
+        min-height: 1.2rem;
+        transition: opacity 0.4s;
+      }
+
+      input.flash,
+      textarea.flash {
+        animation: flash 0.2s ease-in-out;
+      }
+
+      @keyframes flash {
+        0% {
+          background: #ffbdbd;
+        }
+        100% {
+          background: white;
+        }
+      }
+
+      #char_count.warning {
+        color: #d47a00;
+      }
+
+      #char_count.error {
+        color: #d41;
+        font-weight: bold;
+      }
+    </style>
+    <script>
+      const form = document.getElementById("contact_form");
+      const errorOutput = document.getElementById("errors");
+      const infoOutput = document.getElementById("information");
+      const charCount = document.getElementById("char_count");
+      const formErrorsField = document.getElementById("form_errors_field");
+
+      let form_errors = [];
+
+      // Patterns to enforce
+      const patterns = {
+        name: /^[A-Za-z .'-]+$/,
+        subject: /^[A-Za-z0-9 ,.'?!-]+$/,
+      };
+
+      // --- Show error messages ---
+      function showError(msg, fieldEl = null) {
+        errorOutput.textContent = msg;
+        errorOutput.style.opacity = 1;
+
+        if (fieldEl) {
+          fieldEl.classList.add("flash");
+          setTimeout(() => fieldEl.classList.remove("flash"), 200);
+        }
+
+        setTimeout(() => {
+          errorOutput.style.opacity = 0;
+        }, 1500);
+      }
+
+      // --- Add to form_errors ---
+      function logError(field, type, value) {
+        form_errors.push({
+          field,
+          type,
+          value,
+          timestamp: Date.now(),
+        });
+        formErrorsField.value = JSON.stringify(form_errors);
+      }
+
+      // --- Illegal character masking ---
+      function attachMasking(input) {
+        input.addEventListener("input", (e) => {
+          const field = e.target;
+          const name = field.name;
+
+          if (!patterns[name]) return; // only for name + subject
+
+          const regex = patterns[name];
+
+          // If user typed something invalid:
+          if (!regex.test(field.value)) {
+            logError(name, "illegal-character", field.value);
+
+            showError(`Illegal character typed in ${name}`, field);
+
+            // Remove illegal characters:
+            field.value = field.value.replace(/[^A-Za-z0-9 ,.'?!-]/g, "");
+          }
+        });
+      }
+
+      // Apply masking on these fields:
+      attachMasking(document.getElementById("name"));
+      attachMasking(document.getElementById("subject"));
+
+      // --- Textarea character countdown ---
+      const messageField = document.getElementById("message");
+      messageField.addEventListener("input", () => {
+        const max = messageField.maxLength;
+        const remaining = max - messageField.value.length;
+
+        charCount.textContent = `${remaining} characters remaining`;
+        charCount.classList.remove("warning", "error");
+
+        if (remain <= 30 && remain > 0) {
+          charCount.classList.add("warning");
+        }
+
+        if (remain <= 0) {
+          charCount.classList.remove("warning");
+          charCount.classList.add("error");
+
+          logError("message", "max-length", messageField.value.length);
+          showError(
+            "You have reached the maximum message length.",
+            messageField
+          );
+        }
+      });
+
+      // --- Constraint Validation API ---
+      form.addEventListener("submit", (e) => {
+        infoOutput.textContent = "";
+        errorOutput.textContent = "";
+
+        let valid = true;
+
+        [...form.elements].forEach((el) => {
+          if (!el.checkValidity()) {
+            valid = false;
+
+            logError(el.name, "validation-failed", el.value);
+
+            el.setCustomValidity("Please fix this field before submitting.");
+            showError(`Error in field: ${el.name}`, el);
+          } else {
+            el.setCustomValidity(""); // clear custom msg
+          }
+        });
+
+        if (!valid) {
+          e.preventDefault(); // Stop form submission
+          return;
+        }
+
+        // Submit normally
+      });
+    </script>
+  </head>
+  <body>
+    <header>
+      <nav id="nav-bar">
+        <ul id="nav-list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="resume.html">Resume</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>Contact</h1>
+
+      <form
+        action="https://www.httpbin.org/post"
+        method="POST"
+        id="contact_form"
+      >
+        <fieldset>
+          <legend>Send me an email!</legend>
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            minlength="2"
+            maxlength="50"
+            pattern="[A-Za-z .'-]+"
+            placeholder="Your name"
+          />
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            maxlength="60"
+            placeholder="youremail@example.com"
+          />
+          <label for="subject">Subject</label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            required
+            minlength="2"
+            maxlength="80"
+            pattern="[A-Za-z0-9 ,.'?!-]+"
+            placeholder="Subject"
+          />
+          <label for="message">Message</label>
+
+          <textarea
+            id="message"
+            name="message"
+            required
+            minlength="5"
+            maxlength="600"
+            placeholder="Type message..."
+          ></textarea>
+          <p id="char_count" style="font-size: 0.75rem; margin-block-start: 0">
+            600 characters remaining
+          </p>
+          <input type="submit" value="Send" />
+          <input type="text" id="form_errors_field" name="form-errors" />
+          <input
+            type="text"
+            id="possible_bot"
+            name="possible_bot"
+            value="true"
+            hidden
+          />
+          <output
+            id="errors"
+            name="errors"
+            for="name email subject message"
+            form="contact_form"
+          >
+          </output>
+          <output id="information" name="information"></output>
+        </fieldset>
+      </form>
+    </main>
+    <footer>
+      <a href="https://www.linkedin.com/in/sydney-zhang/"
+        ><img src="assets/linkedin.png" alt="LinkedIn"
+      /></a>
+      <a href="https://github.com/sydneyzhang18"
+        ><img src="assets/github.png" alt="GitHub"
+      /></a>
+      <a href="mailto:sydneyzhang.dev@gmail.com"
+        ><img src="assets/mail.png" alt="Email"
+      /></a>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
